@@ -1,19 +1,16 @@
-import express, { json, static as serveStatic } from 'express';
-import authRoutes from './routes/auth.route.js';
-import { config } from 'dotenv';
-import dbConnect from './lib/db.js';
-import cookieParser from 'cookie-parser';
-import messageRoutes from './routes/message.route.js';
-import cors from 'cors';
-import { app, server } from "./lib/socket.js";
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+
+const { json } = require('express');
+const serveStatic = require('express').static;
+const authRoutes = require('./routes/auth.route.js');
+const messageRoutes = require('./routes/message.route.js');
+const { config } = require('dotenv');
+const dbConnect = require('./lib/db.js');
+const cookieParser = require('cookie-parser');
+const cors = require('cors');
+const path = require('path');
+const { app, server } = require('./lib/socket.js');
 
 config();
-
-// Fix __dirname in ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 app.use(json({ limit: '10mb' }));
 app.use(cookieParser());
@@ -28,10 +25,10 @@ app.use('/api/auth', authRoutes);
 app.use('/api/message', messageRoutes);
 
 if (process.env.NODE_ENV === "production") {
-  app.use(serveStatic(join(__dirname, "../frontend/dist")));
+  app.use(serveStatic(path.join(__dirname, "../frontend/dist")));
 
   app.get("*", (req, res) => {
-    res.sendFile(join(__dirname, "../frontend", "dist", "index.html"));
+    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
   });
 }
 
