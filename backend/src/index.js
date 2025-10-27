@@ -1,4 +1,3 @@
-
 const { json } = require('express');
 const serveStatic = require('express').static;
 const authRoutes = require('./routes/auth.route.js');
@@ -27,7 +26,8 @@ app.use('/api/message', messageRoutes);
 if (process.env.NODE_ENV === "production") {
   app.use(serveStatic(path.join(__dirname, "../frontend/dist")));
 
-  app.get("*", (req, res) => {
+  // ✅ FIXED: use regex route instead of "*"
+  app.get(/.*/, (req, res) => {
     res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
   });
 }
